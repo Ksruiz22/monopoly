@@ -1,0 +1,19 @@
+0, Sal de la cárcel, gratis. Esta tarjeta puede mantenerse hasta que sea necesaria o vendida., 1
+1, Has ganado el segundo premio en un concurso de belleza. Recoge $10., 1
+2, De la venta de acciones, obtienes $50., 1
+3, Del seguro de vida madura. Recoge $100., 1
+4, Devolución de impuestos. Recoger $20., 1
+5, El fondo de vacaciones le entrega un reembolso. Recibe $100., 1
+6, Usted hereda $100., 1
+7, Recibe $ 25 de los honorarios de consultoría., 1
+8, Paga servicios de hospital de $100., 1
+9, Error bancario a tu favor. Recoge $200., 1
+10, Paga las cuotas escolares de $50., 1
+11, Servicios del doctor. Paga $50., 1
+12, Ir a la cárcel. Ir directamente a la cárcel. No pase por GO. No recoger $200., 1
+0, Sal de la cárcel, gratis. Esta tarjeta puede mantenerse hasta que sea necesaria o vendida., 2
+1, Multa por exceso de velocidad. Paga $15., 2
+2, El banco te paga un dividendo de $50., 2
+3, Paga impuestos pobres de $15., 2
+4, Su préstamo hipotecario vence. Recoja $150., 2
+5, Ir a la cárcel. Ir directamente a la cárcel. No pase por GO. No recoger $200., 2

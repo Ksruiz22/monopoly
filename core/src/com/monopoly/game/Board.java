@@ -1,20 +1,29 @@
 package com.monopoly.game;
 
+import com.badlogic.gdx.Gdx;
+import com.monopoly.game.Pantallas.GameScreen;
 import com.monopoly.game.utils.CircularList;
+import com.monopoly.game.utils.Node;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.List;
 
 public class Board {
-    CircularList Players = new CircularList();
-    CircularList Squares = new CircularList();
-    CircularList ComunityCards;
-    CircularList ChanceCards;
+    public CircularList Players = new CircularList();
+    public CircularList Squares = new CircularList();
+
+    public Player CurrentPlayer;
+    public Node CurrentTurn;
 
     public Board(List Players){
         for(int j = 0; j<Players.size(); j++){
             this.Players.add(Players.get(j));
         }
         loadSquares();
+
+        CurrentTurn = this.Players.head;
+        CurrentPlayer = (Player) CurrentTurn.data;
     }
 
     public void loadSquares(){
@@ -58,6 +67,16 @@ public class Board {
         this.Squares.add(new Property("Park Place", 37, "Bank", 0, 350, 35));
         this.Squares.add(new Tax("Luxury Tax", 38, 100));
         this.Squares.add(new Property("Boardwalk", 39, "Bank", 0, 400, 50));
+    }
+
+
+    public void nextTurn(){
+        CurrentTurn = CurrentTurn.next;
+        CurrentPlayer = (Player) CurrentTurn.data;
+    }
+
+    public void CheckSquare(){
+
     }
 
 

@@ -1,8 +1,8 @@
 package com.monopoly.game.utils;
 
 public class Node {
-    Object data;
-    Node next;
+    public Object data;
+    public Node next;
     public Node(Object data){
         this.data = data;
         next = null;
@@ -10,5 +10,9 @@ public class Node {
 
     public void setNext(Node next){
         this.next = next;
+    }
+
+    public Object getData(){
+        return this.data;
     }
 }

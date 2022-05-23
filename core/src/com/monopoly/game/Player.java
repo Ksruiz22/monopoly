@@ -5,9 +5,9 @@ import com.monopoly.game.Pantallas.GameScreen;
 import javax.swing.JOptionPane;
 
 public class Player {
-    String nombre, color;
-    int posicion, dinero, acreedor, turnosCarcel, communityChestIndex = 0, chanceIndex = 0, id;
-    boolean carcel, chanceCarcel, communityCarcel, ofertas, humano;
+    public String nombre, color;
+    public int posicion, dinero, acreedor, turnosCarcel, communityChestIndex = 0, chanceIndex = 0, id;
+    public boolean carcel, chanceCarcel, communityCarcel, ofertas, humano;
 
     //Constructor de los jugadores
     public Player(String nombre, int id) {

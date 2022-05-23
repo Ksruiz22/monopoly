@@ -31,20 +31,21 @@ import javax.swing.JOptionPane;
 
 public class GameScreen extends Screens {
     static Skin skin;
-    Pixmap bgPixmap;
-    TextureRegionDrawable textureRegionDrawableBg;
-    Image board, car, ship,
+    public Pixmap bgPixmap;
+    public TextureRegionDrawable textureRegionDrawableBg;
+    public Image boardImage, car, ship,
             hat, dog, dadoActual1, dadoActual2;
-    Label.LabelStyle style;
-    int cantPlayers;
-    double dadoS1 = 1, dadoS2 = 1;
-    List players = new ArrayList();
-    List playersSort = new ArrayList();
-    List counters = new ArrayList();
-    Boolean start = false;
-    int countTurns = 0;
-    String actualPlayer = "";
-    Label player;
+    public Label.LabelStyle style;
+    public int cantPlayers;
+    public double dadoS1 = 1, dadoS2 = 1;
+    public List players = new ArrayList();
+    public List playersSort = new ArrayList();
+    public List counters = new ArrayList();
+    public Boolean start = false;
+    public int countTurns = 0;
+    public String actualPlayer = "";
+    public Label player;
+    public Board board;
     public GameScreen(monopoly game, final List players) {
         super(game);
 
@@ -71,7 +72,6 @@ public class GameScreen extends Screens {
 
         TextButton Roll = new TextButton("Roll Dice", skin);
         TextButton End = new TextButton("End Turn", skin);
-        TextButton Properties = new TextButton("com.monopoly.game.Properties", skin);
         TextButton Monopoly = new TextButton("Monopoly", skin);
 
         Table dados = new Table();
@@ -130,7 +130,7 @@ public class GameScreen extends Screens {
         second_table.setBackground(textureRegionDrawableBg);
         second_table.add(top).fillX();
         second_table.row();
-        second_table.add(board).expand().fillY();
+        second_table.add(boardImage).expand().fillY();
 
 
         table.add(first_table).width(Gdx.graphics.getWidth()/4).fillY();
@@ -172,10 +172,10 @@ public class GameScreen extends Screens {
                             }
                         }
                     }
-                    System.out.println(playersSort);
                     Dialog order = new Dialog("Start", skin, "dialog") {
                         public void result(Object obj) {
                             startGame();
+
                         }
                     };
                     order.text("The order goes: ");
@@ -194,6 +194,14 @@ public class GameScreen extends Screens {
                     actualPlayer = (String) players.get(countTurns-1);
                     player.setText("Turn: "+actualPlayer);
                 }
+
+                if(start == true){
+                    int movimiento = (int) (dadoS1 + dadoS2);
+                    board.CurrentPlayer.posicion = board.CurrentPlayer.posicion + movimiento;
+                    board.nextTurn();
+
+                }
+
             }
         });
 
@@ -231,7 +239,7 @@ public class GameScreen extends Screens {
         textureRegionDrawableBg = new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
 
         //load images
-        board = new Image(Assets.boardTexture);
+        boardImage = new Image(Assets.boardTexture);
         car = new Image(Assets.carTexturebg);
         ship = new Image(Assets.shipTexturebg);
         hat = new Image(Assets.hatTexturebg);
@@ -307,13 +315,14 @@ public class GameScreen extends Screens {
 
     public void startGame(){
         players.clear();
-        System.out.println(playersSort.size());
         for(int i=0;i<playersSort.size();i++){
             String name = String.valueOf(playersSort.get(i));
             players.add(new Player(name, i+1));
         }
-        Board board = new Board(players);
-
+        board = new Board(players);
+        actualPlayer = board.CurrentPlayer.nombre;
+        player.setText("Turn: " + actualPlayer);
+        start = true;
     }
 
 
