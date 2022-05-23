@@ -1,0 +1,24 @@
+
+button.png
+size: 1068, 716
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+bt
+  rotate: false
+  xy: 2, 2
+  size: 1064, 355
+  split: 0, 0, 0, 0
+  pad: 0, 0, 0, 0
+  orig: 1064, 355
+  offset: 0, 0
+  index: -1
+btDown
+  rotate: false
+  xy: 2, 359
+  size: 1064, 355
+  split: 0, 0, 0, 0
+  pad: 0, 0, 0, 0
+  orig: 1064, 355
+  offset: 0, 0
+  index: -1
