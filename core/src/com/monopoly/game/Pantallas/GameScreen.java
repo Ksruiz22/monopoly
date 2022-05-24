@@ -320,6 +320,7 @@ public class GameScreen extends Screens {
             players.add(new Player(name, i+1));
         }
         board = new Board(players);
+        board.ChanceCards.imprimir();
         actualPlayer = board.CurrentPlayer.nombre;
         player.setText("Turn: " + actualPlayer);
         start = true;

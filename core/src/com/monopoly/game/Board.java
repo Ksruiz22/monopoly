@@ -12,16 +12,19 @@ import java.util.List;
 public class Board {
     public CircularList Players = new CircularList();
     public CircularList Squares = new CircularList();
+    public CircularList ComunityCards = new CircularList();
+    public CircularList ChanceCards = new CircularList();
 
     public Player CurrentPlayer;
     public Node CurrentTurn;
+
 
     public Board(List Players){
         for(int j = 0; j<Players.size(); j++){
             this.Players.add(Players.get(j));
         }
         loadSquares();
-
+        loadCards();
         CurrentTurn = this.Players.head;
         CurrentPlayer = (Player) CurrentTurn.data;
     }
@@ -69,14 +72,73 @@ public class Board {
         this.Squares.add(new Property("Boardwalk", 39, "Bank", 0, 400, 50));
     }
 
+    public void loadCards() {
+        try {
+            FileReader fr = new FileReader("/files/Cards.txt");
+            BufferedReader br = new BufferedReader(fr);
+            String cadena;
+            while ((cadena = br.readLine()) != null) {
+                String[] attributes = cadena.split(",");
+                int indice = Integer.parseInt(attributes[0]);
+                String texto = attributes[1];
+                int tipo = Integer.parseInt(attributes[2]);
+                if (tipo == 1) {
+                    this.ComunityCards.add(new Card(indice, texto, tipo));
+                } else {
+                    this.ChanceCards.add(new Card(indice, texto, tipo));
+                }
+            }
+        } catch (Exception ex) {
+        }
+    }
+
 
     public void nextTurn(){
         CurrentTurn = CurrentTurn.next;
         CurrentPlayer = (Player) CurrentTurn.data;
     }
 
-    public void CheckSquare(){
 
+    public void CheckSquare() {
+        compra = False;
+        pos = CurrentPlayer.posicion;
+        q_square = Players.head;
+        p_square = Squares.head;
+        sw = 0;
+        sw_property = 0;
+        do {
+            if (pos == p_square.data.squareId) {
+                sw == 1;
+            }
+            if (p_square.data.price != null) {
+                //check if the currentplayer landed on a property
+                sw_property = 1;
+                {
+                    p_square = p_square.next
+                } while (p_square != Squares.head || (sw == 1 && sw_property == 1))
+                    if (sw == 1 && sw_property == 1) {
+                        //check if the bank owns the properry (does the property have owner?)
+                        if (p_square.data.ownerName == "Bank") {
+                            //code to ask the payer if they wants to buy the property
+                            if (compra == True) {
+                                //takes away the money from the player if they buy the property
+                                CurrentPlayer.dinero = CurrentPlayer.dinero - p_square.data.price
+                            }
+                            //check if the current player owns the property
+                        } else if (p_square.data.ownerName != "Bank" && p_square.data.ownerName != CurrentPlayer.nombre) {
+                            //if the currentplayer doesnt own the property and is on it they have to pay rent
+                            CurrentPlayer.dinero = CurrentPlayer.dinero - p_square.data.rent
+                            //finds the player that owns the property on the list and gives them the rent money paid by currentplayer
+                            do {
+                                if (q_square.data.nombre == p_square.data.ownerName) {
+                                    q_square.data.dinero = q_square.data.dinero + p_square.data.rent
+                                }
+                                q_square = q_square.next
+                            } while (p_square != Squares.head)
+                        }
+                    }
+            }
+        }
     }
 
 

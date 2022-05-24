@@ -31,6 +31,8 @@ public class Assets {
     public static  FreeTypeFontGenerator generator;
     public static LabelStyle labelStyle,labelTitlesStyle;
 
+    public static Texture cp1;
+
     public static void load(){
 
 
@@ -72,6 +74,8 @@ public class Assets {
         //Board Texture
         boardTexture = new Texture(Gdx.files.internal("images/Seminopoly.png"));
 
+        //Properties cards texture
+        cp1 = new Texture(Gdx.files.internal("properties-cards/cp1.png"));
 
         TextureAtlas atlas2 = new TextureAtlas(Gdx.files.internal("ui/button.atlas"));
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("ui/ui.txt"));
