@@ -37,7 +37,7 @@ public class MainMenuScreen extends Screens {
 
         scroll = new ScrollPane(menu, Assets.scrollPaneStyle);
         scroll.setSize(500,SCREEN_HEIGHT/1.5f);
-        scroll.setPosition(390,0);
+        scroll.setPosition(550,0);
         stage.addActor(scroll);
     }
 

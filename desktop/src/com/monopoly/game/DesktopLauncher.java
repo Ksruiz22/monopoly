@@ -10,7 +10,8 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("monopoly");
-		config.setWindowedMode(1280, 800);
+		config.setWindowedMode(1600, 900);
+		config.setResizable(false);
 		new Lwjgl3Application(new monopoly(), config);
 	}
 }

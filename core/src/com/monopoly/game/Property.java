@@ -1,18 +1,20 @@
 package com.monopoly.game;
 
 
-public class Property extends Square {
-    String ownerName;
-    int idOwner, price, rent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-    public Property(String name, int squareId, String ownerName, int idOwner, int price, int rent) {
+public class Property extends Square {
+    public String ownerName;
+    public int idOwner, price, rent;
+    public Image image;
+    public Property(String name, int squareId, String ownerName, int idOwner, int price, int rent, Image image) {
         super(name, squareId);
         this.ownerName = ownerName;
         this.idOwner = idOwner;
         this.price = price;
         this.rent = rent;
+        this.image = image;
     }
-
     public int getOwnerId(){
         return this.idOwner;
     }
@@ -28,5 +30,6 @@ public class Property extends Square {
     public int getPrice() {
         return price;
     }
+
 
 }

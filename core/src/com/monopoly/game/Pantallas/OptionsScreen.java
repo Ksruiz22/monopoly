@@ -74,10 +74,10 @@ public class OptionsScreen extends Screens {
         table.add(anotherLabel).fillX();
         table.row().expandX().fillX();
 
-        table.add(dogPlayer).width(50f).height(50f).expandX().fillX();
-        table.add(shipPlayer).width(120f).height(50f).expandX().fillX();
-        table.add(carPlayer).width(100f).height(50f).expandX().fillX();
-        table.add(hatPlayer).width(50f).height(50f).expandX().fillX();
+        table.add(dogPlayer).width(100f).height(100f).expandX().fillX();
+        table.add(shipPlayer).width(240f).height(100f).expandX().fillX();
+        table.add(carPlayer).width(200f).height(100f).expandX().fillX();
+        table.add(hatPlayer).width(100f).height(100f).expandX().fillX();
         table.row().expandX().fillX();
 
         table.add(checkBoxA).expandX().fillX();

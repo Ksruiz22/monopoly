@@ -31,7 +31,9 @@ public class Assets {
     public static  FreeTypeFontGenerator generator;
     public static LabelStyle labelStyle,labelTitlesStyle;
 
-    public static Texture cp1;
+    public static Texture cp1, cp3, cp5, cp6, cp8, cp9, cp11, cp12,
+            cp13, cp14, cp15, cp16, cp18, cp19, cp21, cp23, cp24, cp25,
+            cp26, cp27, cp28, cp29, cp31, cp32, cp34, cp35, cp37, cp39;;
 
     public static void load(){
 
@@ -75,7 +77,34 @@ public class Assets {
         boardTexture = new Texture(Gdx.files.internal("images/Seminopoly.png"));
 
         //Properties cards texture
-        cp1 = new Texture(Gdx.files.internal("properties-cards/cp1.png"));
+        cp1 = new Texture(Gdx.files.internal("properties-cards/card#1.png"));
+        cp3 = new Texture(Gdx.files.internal("properties-cards/card#3.png"));
+        cp5 = new Texture(Gdx.files.internal("properties-cards/card#5.png"));
+        cp6 = new Texture(Gdx.files.internal("properties-cards/card#6.png"));
+        cp8 = new Texture(Gdx.files.internal("properties-cards/card#8.png"));
+        cp9 = new Texture(Gdx.files.internal("properties-cards/card#9.png"));
+        cp11 = new Texture(Gdx.files.internal("properties-cards/card#11.png"));
+        cp12 = new Texture(Gdx.files.internal("properties-cards/card#12.png"));
+        cp13 = new Texture(Gdx.files.internal("properties-cards/card#13.png"));
+        cp14 = new Texture(Gdx.files.internal("properties-cards/card#14.png"));
+        cp15 = new Texture(Gdx.files.internal("properties-cards/card#15.png"));
+        cp16 = new Texture(Gdx.files.internal("properties-cards/card#16.png"));
+        cp18 = new Texture(Gdx.files.internal("properties-cards/card#18.png"));
+        cp19 = new Texture(Gdx.files.internal("properties-cards/card#19.png"));
+        cp21 = new Texture(Gdx.files.internal("properties-cards/card#21.png"));
+        cp23 = new Texture(Gdx.files.internal("properties-cards/card#23.png"));
+        cp24 = new Texture(Gdx.files.internal("properties-cards/card#24.png"));
+        cp25 = new Texture(Gdx.files.internal("properties-cards/card#25.png"));
+        cp26 = new Texture(Gdx.files.internal("properties-cards/card#26.png"));
+        cp27 = new Texture(Gdx.files.internal("properties-cards/card#27.png"));
+        cp28 = new Texture(Gdx.files.internal("properties-cards/card#28.png"));
+        cp29 = new Texture(Gdx.files.internal("properties-cards/card#29.png"));
+        cp31 = new Texture(Gdx.files.internal("properties-cards/card#31.png"));
+        cp32 = new Texture(Gdx.files.internal("properties-cards/card#32.png"));
+        cp34 = new Texture(Gdx.files.internal("properties-cards/card#34.png"));
+        cp35 = new Texture(Gdx.files.internal("properties-cards/card#35.png"));
+        cp37 = new Texture(Gdx.files.internal("properties-cards/card#37.png"));
+        cp39 = new Texture(Gdx.files.internal("properties-cards/card#39.png"));
 
         TextureAtlas atlas2 = new TextureAtlas(Gdx.files.internal("ui/button.atlas"));
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("ui/ui.txt"));

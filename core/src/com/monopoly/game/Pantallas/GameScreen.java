@@ -20,14 +20,13 @@ import com.badlogic.gdx.utils.Align;
 import com.monopoly.game.Assets;
 import com.monopoly.game.Board;
 import com.monopoly.game.Player;
+import com.monopoly.game.Property;
 import com.monopoly.game.Screens;
 import com.monopoly.game.monopoly;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 public class GameScreen extends Screens {
     static Skin skin;
@@ -38,23 +37,31 @@ public class GameScreen extends Screens {
     public Label.LabelStyle style;
     public int cantPlayers;
     public double dadoS1 = 1, dadoS2 = 1;
+
     public List players = new ArrayList();
     public List playersSort = new ArrayList();
     public List counters = new ArrayList();
+    ArrayList<Image> playersSkin = new ArrayList<Image>();
+
     public Boolean start = false;
     public int countTurns = 0;
     public String actualPlayer = "";
-    public Label player;
+    public int actualMoney;
+    public Label player, money;
     public Board board;
+    public Table menu;
+    public Image propertyCard = new Image();
+    public boolean draw = false;
+    TextButton comprar,Roll, End;
+
     public GameScreen(monopoly game, final List players) {
         super(game);
 
         loadAssets();
         selectDiceImages();
+
         cantPlayers = players.size();
         this.players = players;
-
-
 
         Table table = new Table();
         table.defaults().pad(10F);
@@ -64,26 +71,25 @@ public class GameScreen extends Screens {
         player = new Label("Turn: "+actualPlayer,skin);
         player.setAlignment(Align.left);
 
-        Label money = new Label("Money: 1000$",skin);
+        money = new Label("Money: ",skin);
         money.setAlignment(Align.center);
 
         Label turn = new Label("Players: ",skin);
         turn.setAlignment(Align.left);
 
-        TextButton Roll = new TextButton("Roll Dice", skin);
-        TextButton End = new TextButton("End Turn", skin);
+        Roll = new TextButton("Roll Dice", skin);
+        End = new TextButton("End Turn", skin);
+        End.setVisible(false);
         TextButton Monopoly = new TextButton("Monopoly", skin);
 
         Table dados = new Table();
         dados.pad(5f);
-        dados.setDebug(true);
         dados.add(player).colspan(2).fillX();
         dados.row();
         dados.add(dadoActual1);
         dados.add(dadoActual2).padLeft(10f);
 
-        Table menu = new Table();
-        menu.setDebug(true);
+        menu = new Table();
         menu.add(Roll).colspan(2).fillX().size(120,50);
         menu.row();
         menu.add(End).colspan(2).fillX().padTop(20F).size(120,50);
@@ -91,8 +97,8 @@ public class GameScreen extends Screens {
         menu.add(money).colspan(2).fillX().padTop(20F).size(120,50);
 
 
+
         Table turns = new Table();
-        turns.setDebug(true);
         turns.add(turn);
 
         if(players.contains("dog")){
@@ -112,14 +118,12 @@ public class GameScreen extends Screens {
         Table top = new Table();
         top.pad(5f);
         top.align(Align.left);
-        top.setDebug(true);
         top.add(turns).fillX();
-        top.add(Monopoly).size(150,100).expand();
+        top.add(Monopoly).size(150,100).expand().align(Align.right).padRight(20);
 
         Table first_table = new Table();
         first_table.defaults().pad(5F);
         first_table.setBackground(textureRegionDrawableBg);
-        first_table.setDebug(true);
         first_table.defaults().pad(5F);
         first_table.add(dados).expand().fillX();
         first_table.row();
@@ -139,14 +143,14 @@ public class GameScreen extends Screens {
 
 
         stage.addActor(table);
-        stage.setDebugAll(true);
+
 
         Roll.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                propertyCard.setVisible(true);
                 girarDados();
                 selectDiceImages();
-
                 //Just the start
                 if(countTurns <= players.size()){
                     counters.add(dadoS1+dadoS2);
@@ -197,11 +201,77 @@ public class GameScreen extends Screens {
 
                 if(start == true){
                     int movimiento = (int) (dadoS1 + dadoS2);
-                    board.CurrentPlayer.posicion = board.CurrentPlayer.posicion + movimiento;
-                    board.nextTurn();
+                    if((board.CurrentPlayer.posicion + movimiento)>39){
+                        if((board.CurrentPlayer.posicion + movimiento)==40){
+                            board.CurrentPlayer.posicion = 0;
+                        }else{
+                            board.CurrentPlayer.posicion = (board.CurrentPlayer.posicion + movimiento) - 40;
+                        }
 
+                    }else {
+                        board.CurrentPlayer.posicion = board.CurrentPlayer.posicion + movimiento;
+                        board.CheckSquare();
+                    }
+
+
+                    comprar = new TextButton("Comprar", skin);
+                    if(board.CurrentPosition.data instanceof Property && draw == false){
+                        menu.row();
+                        menu.add(propertyCard).colspan(2).fillX().padTop(20F).size(219,250);
+                        menu.row();
+                        menu.add(comprar).width(100).padTop(20F).colspan(2).fillX();
+                        draw = true;
+                    }
+                    if(board.CurrentPosition.data instanceof Property){
+
+                        if(((Property)board.CurrentPosition.data).idOwner == 0){
+                            comprar.setVisible(true);
+                            comprar.addListener(new ClickListener(){
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    ((Property)board.CurrentPosition.data).idOwner = board.CurrentPlayer.id;
+                                    ((Player)board.CurrentTurn.data).dinero = ((Player)board.CurrentTurn.data).dinero - ((Property)board.CurrentPosition.data).price;
+                                    board.actPlayer();
+                                    board.actSquare();
+                                    actualMoney = board.CurrentPlayer.dinero;
+                                    money.setText("Money: " + actualMoney);
+                                }
+                            });
+                        }else{
+                            comprar.setVisible(false);
+                        }
+
+                        propertyCard.setDrawable(((Property)board.CurrentPosition.data).image.getDrawable());
+                    }
+                    Roll.setVisible(false);
+                    menu.getCell(Roll).size(0,0);
+                    End.setVisible(true);
+                    menu.getCell(End).size(120,50);
                 }
 
+            }
+        });
+
+        End.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                board.nextTurn();
+                actualPlayer = board.CurrentPlayer.nombre;
+                player.setText("Turn: " + actualPlayer);
+                actualMoney = board.CurrentPlayer.dinero;
+                money.setText("Money: " + actualMoney);
+                if(board.CurrentPosition.data instanceof Property){
+                    propertyCard.setVisible(true);
+                    propertyCard.setDrawable(((Property)board.CurrentPosition.data).image.getDrawable());
+                }else{
+                    propertyCard.setVisible(false);
+                }
+                board.printActualMoney();
+                comprar.setVisible(false);
+                Roll.setVisible(true);
+                menu.getCell(Roll).size(120,50);
+                End.setVisible(false);
+                menu.getCell(End).size(0,0);
             }
         });
 
@@ -217,12 +287,22 @@ public class GameScreen extends Screens {
             start.show(stage);
             countTurns++;
         }
-
     }
 
     @Override
     public void draw(float delta) {
-
+        if(players.contains("dog")){
+            spriteBatch.draw(dogS.getTexture(),Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.1f),Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f),40,40 );
+        }
+        if(players.contains("ship")){
+            spriteBatch.draw(shipS.getTexture(),Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.11f),Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f),70,50 );
+        }
+        if(players.contains("car")){
+            spriteBatch.draw(carS.getTexture(),Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f),Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f),60,45 );
+        }
+        if(players.contains("hat")){
+            spriteBatch.draw(hatS.getTexture(),Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f),Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f),40,40 );
+        }
     }
 
     @Override
@@ -234,7 +314,7 @@ public class GameScreen extends Screens {
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 
         bgPixmap = new Pixmap(1,1, Pixmap.Format.RGBA8888);
-        bgPixmap.setColor(Color.rgba8888(20/255f,163/255f,18/255f,255/255f));
+        bgPixmap.setColor(Color.rgba8888(55/255f,54/255f,46/255f,0.5f));
         bgPixmap.fill();
         textureRegionDrawableBg = new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
 
@@ -320,16 +400,16 @@ public class GameScreen extends Screens {
             players.add(new Player(name, i+1));
         }
         board = new Board(players);
-        board.ChanceCards.imprimir();
         actualPlayer = board.CurrentPlayer.nombre;
         player.setText("Turn: " + actualPlayer);
+        actualMoney = board.CurrentPlayer.dinero;
+        money.setText("Money: " + actualMoney);
+        board.printActualMoney();
         start = true;
     }
 
-
-    public static void alerta(String alerta) {
-        JOptionPane.showMessageDialog(null, alerta);
-        Dialog alert = new Dialog("Alert", skin, "dialog") {
+    public static void alerta(String alerta, String label) {
+        Dialog alert = new Dialog(label, skin, "dialog") {
             public void result(Object obj) {
             }
         };
@@ -337,8 +417,6 @@ public class GameScreen extends Screens {
         alert.button("Ok", true);
         alert.show(stage);
     }
-
-
 
 
 

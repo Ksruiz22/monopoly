@@ -87,12 +87,9 @@ public class Player {
         deck[index] = 20;
     }
 
-    public void atrasTresEspacios() {
-        this.posicion = posicion - 3;
-    }
 
     public void alerta(String alerta) {
-        GameScreen.alerta(alerta);
+        GameScreen.alerta(alerta, "Alerta de juego");
     }
 
 

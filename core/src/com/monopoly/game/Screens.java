@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -16,11 +17,11 @@ import com.monopoly.game.Pantallas.MainMenuScreen;
 import com.monopoly.game.Pantallas.OptionsScreen;
 
 public abstract class Screens extends InputAdapter implements Screen {
-    public static final float SCREEN_WIDTH = 1280;
-    public static final float SCREEN_HEIGHT = 800;
+    public static final float SCREEN_WIDTH = 1600;
+    public static final float SCREEN_HEIGHT = 900;
 
-    public static final float WORLD_WIDTH = 12.8f;
-    public static final float WORLD_HEIGHT = 8f;
+    public static final float WORLD_WIDTH = 16.0f;
+    public static final float WORLD_HEIGHT = 9f;
 
     public monopoly game;
 
@@ -29,7 +30,8 @@ public abstract class Screens extends InputAdapter implements Screen {
     public static Sprite backgroundTitleSprite,backgroundImageSprite;
     public SpriteBatch spriteBatch;
 
-
+    public static Sprite shipS, dogS, carS,
+            hatS;
     public static Stage stage;
 
     public Screens(monopoly game){
@@ -55,6 +57,13 @@ public abstract class Screens extends InputAdapter implements Screen {
             backgroundTitleSprite.setPosition((Gdx.graphics.getWidth()/2)-(backgroundTitleSprite.getWidth()/2),Gdx.graphics.getHeight()/1.6f);
         }
 
+        if(this instanceof GameScreen){
+            shipS = new Sprite(Assets.shipTexture);
+            hatS = new Sprite(Assets.hatTexture);
+            dogS = new Sprite(Assets.dogTexture);
+            carS = new Sprite(Assets.carTexture);
+        }
+
 
         spriteBatch = new SpriteBatch();
 
@@ -74,15 +83,27 @@ public abstract class Screens extends InputAdapter implements Screen {
             Gdx.gl.glClearColor(13/255f, 107/255f, 2/255f, 1);
         }
 
-        spriteBatch.begin();
+        if(!(this instanceof GameScreen)){
+            spriteBatch.begin();
 
-        draw(delta);
+            draw(delta);
 
-        spriteBatch.end();
+            spriteBatch.end();
 
-        stage.draw();
+            stage.draw();
+        }else{
+            spriteBatch.begin();
+            stage.draw();
+            draw(delta);
+
+            spriteBatch.end();
+
+
+        }
+
 
     }
+
 
     public abstract void draw(float delta);
 
