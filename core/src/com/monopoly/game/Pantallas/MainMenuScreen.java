@@ -45,8 +45,6 @@ public class MainMenuScreen extends Screens {
         switch (option){
             default:
                 return  new OptionsScreen(game);
-            case INFO:
-                return new InfoScreen(game);
             case EXIT:
                 Gdx.app.exit();
                 return null;

@@ -52,7 +52,24 @@ public class GameScreen extends Screens {
     public Table menu;
     public Image propertyCard = new Image();
     public boolean draw = false;
+    public int cantDobles = 0, acumulado = 0;
     TextButton comprar,Roll, End;
+    boolean dogb = false, shipb = false, carb = false, hatb = false;
+
+
+    //Posiciones iniciales
+    float dogX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.1f);
+    float dogY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f);
+
+    float shipX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.11f);
+    float shipY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f);
+
+    float hatX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f);
+    float hatY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f);
+
+    float carX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f);
+    float carY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f);
+
 
     public GameScreen(monopoly game, final List players) {
         super(game);
@@ -82,7 +99,7 @@ public class GameScreen extends Screens {
         End.setVisible(false);
         TextButton Monopoly = new TextButton("Monopoly", skin);
 
-        Table dados = new Table();
+        final Table dados = new Table();
         dados.pad(5f);
         dados.add(player).colspan(2).fillX();
         dados.row();
@@ -143,7 +160,7 @@ public class GameScreen extends Screens {
 
 
         stage.addActor(table);
-
+        comprar = new TextButton("Comprar", skin);
 
         Roll.addListener(new ClickListener(){
             @Override
@@ -179,7 +196,6 @@ public class GameScreen extends Screens {
                     Dialog order = new Dialog("Start", skin, "dialog") {
                         public void result(Object obj) {
                             startGame();
-
                         }
                     };
                     order.text("The order goes: ");
@@ -199,22 +215,67 @@ public class GameScreen extends Screens {
                     player.setText("Turn: "+actualPlayer);
                 }
 
-                if(start == true){
-                    int movimiento = (int) (dadoS1 + dadoS2);
-                    if((board.CurrentPlayer.posicion + movimiento)>39){
-                        if((board.CurrentPlayer.posicion + movimiento)==40){
-                            board.CurrentPlayer.posicion = 0;
-                        }else{
-                            board.CurrentPlayer.posicion = (board.CurrentPlayer.posicion + movimiento) - 40;
-                        }
+                if(start == true) {
 
-                    }else {
-                        board.CurrentPlayer.posicion = board.CurrentPlayer.posicion + movimiento;
+                    if ((dadoS1 == dadoS2) && (board.CurrentPlayer.carcel != true) && (cantDobles<3)) {
+                        alerta("Vuelve a lanzar los dados, sacaste dobles", "Anuncio");
+                        cantDobles++;
+                    }
+                    if (cantDobles == 3) {
+                        alerta("Vas a la carcel, sacaste 3 dobles", "Anuncio");
+                        ((Player)board.CurrentTurn.data).posicion = 10;
+                        ((Player)board.CurrentTurn.data).carcel = true;
+                        actualMoney = ((Player)board.CurrentTurn.data).dinero;
+                        board.actPlayer();
+                        cantDobles = 0;
+                    }
+
+                    int movimiento = (int) (dadoS1 + dadoS2);
+
+                    if(board.CurrentPlayer.carcel != true){
+                        moverFicha(board.CurrentPlayer.posicion, board.CurrentPlayer.posicion + movimiento, board.CurrentPlayer.nombre);
+                        if((board.CurrentPlayer.posicion + movimiento)>39){
+                            if((board.CurrentPlayer.posicion + movimiento)==40){
+                                board.CurrentPlayer.posicion = 0;
+                            }else{
+                                board.CurrentPlayer.posicion = (board.CurrentPlayer.posicion + movimiento) - 40;
+                                ((Player)board.CurrentTurn.data).dinero = (((Player)board.CurrentTurn.data).dinero) + 200;
+                                alerta("La banca le da 200$ a: "+ ((Player)board.CurrentTurn.data).nombre, "Alerta");
+                                actualMoney = ((Player)board.CurrentTurn.data).dinero;
+                                money.setText("Money: " + actualMoney);
+                            }
+                        }else {
+                            board.CurrentPlayer.posicion = board.CurrentPlayer.posicion + movimiento;
+                        }
                         board.CheckSquare();
+                        actualMoney = ((Player)board.CurrentTurn.data).dinero;
+                        money.setText("Money: " + actualMoney);
+                        }else{
+                        if(dadoS1 == dadoS2){
+                            ((Player)board.CurrentTurn.data).carcel = false;
+                            ((Player)board.CurrentTurn.data).posicion = ((Player)board.CurrentTurn.data).posicion+ movimiento;
+                            board.actPlayer();
+                            board.CheckSquare();
+                            actualMoney = ((Player)board.CurrentTurn.data).dinero;
+                            money.setText("Money: " + actualMoney);
+                        }else{
+                            ((Player)board.CurrentTurn.data).turnosCarcel ++;
+                            if(((Player)board.CurrentTurn.data).turnosCarcel == 3){
+                                ((Player)board.CurrentTurn.data).dinero = (((Player)board.CurrentTurn.data).dinero) - 50;
+                                alerta("Llevas 3 turnos en la carcel, pagas 50 para salir.", "Alerta");
+                                ((Player)board.CurrentTurn.data).carcel = false;
+                                ((Player)board.CurrentTurn.data).turnosCarcel = 0;
+                                ((Player)board.CurrentTurn.data).posicion = ((Player)board.CurrentTurn.data).posicion+ movimiento;
+                                board.actPlayer();
+                                board.CheckSquare();
+                                board.checkPlayer(board.CurrentPlayer);
+                                actualMoney = ((Player)board.CurrentTurn.data).dinero;
+                                money.setText("Money: " + actualMoney);
+                            }
+                        }
                     }
 
 
-                    comprar = new TextButton("Comprar", skin);
                     if(board.CurrentPosition.data instanceof Property && draw == false){
                         menu.row();
                         menu.add(propertyCard).colspan(2).fillX().padTop(20F).size(219,250);
@@ -222,31 +283,44 @@ public class GameScreen extends Screens {
                         menu.add(comprar).width(100).padTop(20F).colspan(2).fillX();
                         draw = true;
                     }
-                    if(board.CurrentPosition.data instanceof Property){
 
+                    if(board.CurrentPosition.data instanceof Property){
+                        propertyCard.setVisible(true);
                         if(((Property)board.CurrentPosition.data).idOwner == 0){
                             comprar.setVisible(true);
-                            comprar.addListener(new ClickListener(){
-                                @Override
-                                public void clicked(InputEvent event, float x, float y) {
-                                    ((Property)board.CurrentPosition.data).idOwner = board.CurrentPlayer.id;
-                                    ((Player)board.CurrentTurn.data).dinero = ((Player)board.CurrentTurn.data).dinero - ((Property)board.CurrentPosition.data).price;
-                                    board.actPlayer();
-                                    board.actSquare();
-                                    actualMoney = board.CurrentPlayer.dinero;
-                                    money.setText("Money: " + actualMoney);
-                                }
-                            });
                         }else{
                             comprar.setVisible(false);
                         }
-
                         propertyCard.setDrawable(((Property)board.CurrentPosition.data).image.getDrawable());
+                    }else{
+                        propertyCard.setVisible(false);
                     }
-                    Roll.setVisible(false);
-                    menu.getCell(Roll).size(0,0);
-                    End.setVisible(true);
-                    menu.getCell(End).size(120,50);
+
+
+                    if((dadoS1 != dadoS2)){
+                        Roll.setVisible(false);
+                        menu.getCell(Roll).size(0,0);
+                        End.setVisible(true);
+                        menu.getCell(End).size(120,50);
+                    }
+
+                }
+
+            }
+        });
+
+        comprar.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(((Player)board.CurrentTurn.data).dinero > ((Property)board.CurrentPosition.data).price){
+                    ((Player)board.CurrentTurn.data).dinero = ((Player)board.CurrentTurn.data).dinero - ((Property)board.CurrentPosition.data).price;
+                    ((Property)board.CurrentPosition.data).idOwner = ((Player)board.CurrentTurn.data).id;
+                    ((Property)board.CurrentPosition.data).ownerName = ((Player)board.CurrentTurn.data).nombre;
+
+                    actualMoney = ((Player)board.CurrentTurn.data).dinero;
+                    money.setText("Money: " + actualMoney);
+                }else{
+                    alerta("No tienes suficiente dinero para comprar esta propiedad","Mensaje");
                 }
 
             }
@@ -256,17 +330,21 @@ public class GameScreen extends Screens {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 board.nextTurn();
+                cantDobles = 0;
                 actualPlayer = board.CurrentPlayer.nombre;
                 player.setText("Turn: " + actualPlayer);
                 actualMoney = board.CurrentPlayer.dinero;
                 money.setText("Money: " + actualMoney);
+
                 if(board.CurrentPosition.data instanceof Property){
                     propertyCard.setVisible(true);
                     propertyCard.setDrawable(((Property)board.CurrentPosition.data).image.getDrawable());
                 }else{
                     propertyCard.setVisible(false);
                 }
+
                 board.printActualMoney();
+
                 comprar.setVisible(false);
                 Roll.setVisible(true);
                 menu.getCell(Roll).size(120,50);
@@ -289,20 +367,274 @@ public class GameScreen extends Screens {
         }
     }
 
+
+
     @Override
     public void draw(float delta) {
         if(players.contains("dog")){
-            spriteBatch.draw(dogS.getTexture(),Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.1f),Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f),40,40 );
-        }
+            dogb = true;}
         if(players.contains("ship")){
-            spriteBatch.draw(shipS.getTexture(),Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.11f),Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f),70,50 );
+            shipb = true;
         }
         if(players.contains("car")){
-            spriteBatch.draw(carS.getTexture(),Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f),Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f),60,45 );
+            carb = true;
         }
         if(players.contains("hat")){
-            spriteBatch.draw(hatS.getTexture(),Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f),Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f),40,40 );
+            hatb = true;
         }
+        if (dogb == true){
+            spriteBatch.draw(dogS.getTexture(),dogX,dogY,40,40 );
+        }
+        if (shipb == true){
+            spriteBatch.draw(shipS.getTexture(),shipX,shipY,70,50 );
+        }
+        if(carb == true){
+            spriteBatch.draw(carS.getTexture(),carX,carY,60,45 );
+        }
+        if(hatb == true){
+            spriteBatch.draw(hatS.getTexture(),hatX,hatY,40,40 );
+        }
+
+    }
+
+    public void moverFicha(int posicionActual, int posicionFinal, String ficha){
+        if((posicionActual<10) && (posicionFinal <=10)) {
+            int mov = posicionFinal  - posicionActual;
+            switch (ficha) {
+                case "dog":
+                        dogX = ((dogX - (90 * mov)));
+                    break;
+                case "ship":
+                        shipX = ((shipX - (90 * mov)));
+                    break;
+                case "car":
+                        carX = ((carX - (95 * mov)));
+                    break;
+                case "hat":
+                        hatX = ((hatX - (95 * mov)));
+                    break;
+
+            }
+        }
+
+        if(posicionFinal == 30){
+            switch (ficha) {
+                case "dog":
+                    dogX = (Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.1f))-980;
+                    dogY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f);
+                    break;
+                case "ship":
+                    shipX = (Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.11f))-980;
+                    shipY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f);
+                    break;
+                case "car":
+                    carX = (Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f))-980;
+                    carY= Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f);
+                    break;
+                case "hat":
+                    hatX = ( Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f))-980;
+                    hatY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f);
+                    break;
+
+            }
+        }
+
+        if(posicionActual == 9 && posicionFinal == 21){
+            switch (ficha) {
+                case "dog":
+                    dogY = Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() * 0.20f);
+                    break;
+                case "ship":
+                    shipY = Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() * 0.24f);
+                    break;
+                case "car":
+                    carY = Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() * 0.24f);
+                    break;
+                case "hat":
+                    hatY = Gdx.graphics.getHeight() - (Gdx.graphics.getHeight() * 0.20f);
+                    break;
+            }
+        }
+
+        if(posicionActual == 19 && posicionFinal == 31){
+            switch (ficha) {
+                case "dog":
+                    dogX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.1f);
+                    break;
+                case "ship":
+                    shipX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.11f);
+                    break;
+                case "car":
+                    carX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f);
+                    break;
+                case "hat":
+                    hatX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f);
+                    break;
+            }
+        }
+        if(posicionActual == 29 && posicionFinal == 41){
+            switch (ficha) {
+                case "dog":
+                    dogY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f);
+                    break;
+                case "ship":
+                    shipY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f);
+                    break;
+                case "car":
+                    carY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.94f);
+                    break;
+                case "hat":
+                    hatY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.98f);
+                    break;
+            }
+        }
+        if(posicionActual == 39 && posicionFinal == 51){
+            switch (ficha) {
+                case "dog":
+                    dogX = (Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.1f))-980;
+                    break;
+                case "ship":
+                    shipX = (Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.11f))-980;
+                    break;
+                case "car":
+                    carX = (Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f))-980;
+                    break;
+                case "hat":
+                    hatX = ( Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f))-980;
+                    break;
+            }
+        }
+
+
+
+
+        if((posicionActual<10) && (posicionFinal >10) && (posicionFinal<=20)) {
+            int mov = posicionFinal  - ((10-posicionActual)+posicionActual);
+            switch (ficha) {
+                case "dog":
+                    dogX = (Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.1f))-980;
+                    dogY = ((dogY + (65 * (mov))));
+                    break;
+                case "ship":
+                    shipX = (Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.11f))-980;
+                    shipY = ((shipY + (70 * (mov))));
+                    break;
+                case "car":
+                    carX = (Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f))-980;
+                    carY = ((carY + (65 * (mov))));
+                    break;
+                case "hat":
+                    hatX = ( Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f))-980;
+                    hatY = ((hatY  +(70* (mov))));
+                    break;
+            }
+        }
+
+        if((posicionActual>=10) && (posicionFinal<=20)){
+            int mov = posicionFinal - posicionActual;
+            switch (ficha){
+                case "dog":
+                    dogY = ((dogY + (65 * (mov))));
+                    break;
+                case "ship":
+                    shipY = ((shipY + (7 * (mov))));
+                    break;
+                case "car":
+                    carY = ((carY + (65 * (mov))));
+                    break;
+                case "hat":
+                    hatY = ((hatY  +(7 * (mov))));
+                    break;
+            }
+
+        }
+
+
+        if((posicionActual>=20) && (posicionFinal <30)) {
+            int mov = posicionFinal-20;
+            switch (ficha) {
+                case "dog":
+                    dogX = ((dogX + (50 * mov)));
+                    break;
+                case "ship":
+                    shipX = ((shipX + (50 * mov)));
+                    break;
+                case "car":
+                    carX = ((carX + (50 * mov)));
+                    break;
+                case "hat":
+                    hatX = ((hatX + (50 * mov)));
+                    break;
+            }
+        }
+
+
+        if((posicionActual>=10) && (posicionFinal>20) && (posicionFinal<30)) {
+            int mov = posicionFinal-20;
+            switch (ficha) {
+                case "dog":
+                    dogX = ((dogX + (90 * mov)));
+                    dogY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.20f);
+                    break;
+                case "ship":
+                    shipX = ((shipX + (90 * mov)));
+                    shipY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.24f);
+                    break;
+                case "car":
+                    carX = ((carX + (90 * mov)));
+                    carY= Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.24f);
+                    break;
+                case "hat":
+                    hatX = ((hatX + (90 * mov)));
+                    hatY = Gdx.graphics.getHeight()-(Gdx.graphics.getHeight()*0.20f);
+                    break;
+
+            }
+        }
+
+        if((posicionActual>=20) && (posicionFinal>30) && (posicionFinal<40)) {
+            int mov = posicionFinal-30;
+            switch (ficha) {
+                case "dog":
+                    dogX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.1f);
+                    dogY = ((dogY - (65 * (mov))));
+                    break;
+                case "ship":
+                    shipX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.11f);
+                    shipY = ((shipY - (72 * (mov))));
+                    break;
+                case "car":
+                    carX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f);
+                    carY = ((carY - (65 * (mov))));
+                    break;
+                case "hat":
+                    hatX = Gdx.graphics.getWidth()-(Gdx.graphics.getWidth()*0.08f);
+                    hatY = ((hatY  - (72 * (mov))));
+                    break;
+
+            }
+        }
+
+        if((posicionActual>=39) && (posicionFinal<=40) ) {
+            int mov = posicionFinal-30;
+            switch (ficha) {
+                case "dog":
+                    dogY = ((dogY - (65 * (mov))));
+                    break;
+                case "ship":
+                    shipY = ((shipY - (72 * (mov))));
+                    break;
+                case "car":
+                    carY = ((carY - (65 * (mov))));
+                    break;
+                case "hat":
+                    hatY = ((hatY  - (72 * (mov))));
+                    break;
+
+            }
+        }
+
+
     }
 
     @Override
@@ -388,10 +720,6 @@ public class GameScreen extends Screens {
         }
     }
 
-    public void resetDices(){
-        dadoS1 = 1;
-        dadoS2 = 1;
-    }
 
     public void startGame(){
         players.clear();
@@ -404,7 +732,6 @@ public class GameScreen extends Screens {
         player.setText("Turn: " + actualPlayer);
         actualMoney = board.CurrentPlayer.dinero;
         money.setText("Money: " + actualMoney);
-        board.printActualMoney();
         start = true;
     }
 
@@ -418,6 +745,14 @@ public class GameScreen extends Screens {
         alert.show(stage);
     }
 
-
-
+    public static void fin() {
+        Dialog alert = new Dialog("FIN", skin, "dialog") {
+            public void result(Object obj) {
+                Gdx.app.exit();
+            }
+        };
+        alert.text("HAS GANADO!!, TODOS LOS DEMÁS JUGADORES ESTAN EN BANCARROTA");
+        alert.button("Ok", true);
+        alert.show(stage);
+    }
 }

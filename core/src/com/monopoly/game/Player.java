@@ -23,38 +23,7 @@ public class Player {
     }
 
 
-    public boolean pagar(int cantidad, int acreedor) {
-        if (cantidad <= this.dinero) {
-            this.dinero = dinero - cantidad;
-            //Crear un método para actualizar el dinero por pantalla o consola.
-            return true;
-        } else {
-            this.dinero = dinero - cantidad;
-            this.acreedor = acreedor;
-            //Crear un método para actualizar el dinero por pantalla o consola.
-            return false;
-        }
-    }
 
-    public void añadirCantidad(int cantidad, String causa) {
-        this.dinero = dinero + cantidad;
-        alerta(this.nombre + " recibe $" + cantidad + " de " + causa + ".");
-    }
-
-    public void restarCantidad(int cantidad, String causa) {
-        this.pagar(cantidad, 0);
-        alerta(this.nombre + " pierde $" + cantidad + " de " + causa + ".");
-    }
-
-    public void veCarcel() {
-        this.carcel = true;
-        setPosicion(10);
-        alerta(this.nombre + " fue envíado a la cárcel.");
-    }
-
-    public void setPosicion(int posicion){
-        this.posicion = posicion;
-    }
 
     public void usarCartaCarcel(int deck1[], int deck2[], int indice1, int indice2) {
         this.carcel = false;
@@ -91,7 +60,6 @@ public class Player {
     public void alerta(String alerta) {
         GameScreen.alerta(alerta, "Alerta de juego");
     }
-
 
     public void actualizarDinero(int pContador) {
         Player p_i = this;

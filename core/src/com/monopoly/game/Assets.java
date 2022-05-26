@@ -33,7 +33,7 @@ public class Assets {
 
     public static Texture cp1, cp3, cp5, cp6, cp8, cp9, cp11, cp12,
             cp13, cp14, cp15, cp16, cp18, cp19, cp21, cp23, cp24, cp25,
-            cp26, cp27, cp28, cp29, cp31, cp32, cp34, cp35, cp37, cp39;;
+            cp26, cp27, cp28, cp29, cp31, cp32, cp34, cp35, cp37, cp38, cp39;;
 
     public static void load(){
 
@@ -104,6 +104,7 @@ public class Assets {
         cp34 = new Texture(Gdx.files.internal("properties-cards/card#34.png"));
         cp35 = new Texture(Gdx.files.internal("properties-cards/card#35.png"));
         cp37 = new Texture(Gdx.files.internal("properties-cards/card#37.png"));
+        cp38 = new Texture(Gdx.files.internal("properties-cards/card#38.png"));
         cp39 = new Texture(Gdx.files.internal("properties-cards/card#39.png"));
 
         TextureAtlas atlas2 = new TextureAtlas(Gdx.files.internal("ui/button.atlas"));
