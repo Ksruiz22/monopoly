@@ -638,8 +638,7 @@ public class GameScreen extends Screens {
     }
 
     @Override
-    public void update(float delta) {
-
+    public void update(float delta){
     }
 
     public void loadAssets(){
